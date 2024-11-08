@@ -1,44 +1,38 @@
 pipeline {
-    agent any  // This specifies any available Jenkins agent
-    
+    agent any
+
     stages {
         stage('Checkout') {
             steps {
-                // Clone the repository containing the Java file
-                git branch: 'main', url: 'https://github.com/harshssn23/javaaa.git' // Replace with your Git repo URL
+                // Clone the repository
+                git branch: 'main', url: 'https://github.com/harshssn23/javaaa.git'
             }
         }
 
         stage('Compile') {
             steps {
-                // Compile the Java file
-                script {
-                    sh 'javac Test.java'
-                }
+                // Compile the Java program using 'javac'
+                bat 'javac Test.java'
             }
         }
 
         stage('Run') {
             steps {
-                // Run the Java program
-                script {
-                    sh 'java Test'
-                }
+                // Run the compiled Java program
+                bat 'java Test'
             }
         }
     }
 
     post {
         always {
-            // Cleanup workspace
+            // Clean up the workspace
             cleanWs()
         }
         success {
-            // Print success message
             echo 'Java program executed successfully!'
         }
         failure {
-            // Print failure message
             echo 'Execution of Java program failed.'
         }
     }
