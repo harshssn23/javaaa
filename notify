@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/harshssn23/javaaa.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Compile the Java program
+                    bat 'javac Test.java'
+                }
+            }
+        }
+
+        stage('Run') {
+            steps {
+                script {
+                    // Run the compiled Java program
+                    bat 'java Test'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build succeeded!'
+            emailext(
+                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "Good news! The job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' completed successfully. \n\nCheck it here: ${env.BUILD_URL}",
+                to: 'user@example.com'
+            )
+        }
+
+        failure {
+            echo 'Build failed!'
+            emailext(
+                subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                body: "Unfortunately, the job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' failed.\n\nCheck the logs here: ${env.BUILD_URL}",
+                to: 'user@example.com'
+            )
+        }
+
+        always {
+            cleanWs()  // Clean up the workspace after the job
+        }
+    }
+}
